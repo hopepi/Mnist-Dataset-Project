@@ -37,24 +37,29 @@ plt.xlabel("Number")
 plt.ylabel("Label Count")
 plt.xticks(label_test_counts.index)
 plt.title("Test number and label count figure")
-plt.show()  # Seaborn grafiğini gösterme
+plt.show()
+
 
 plt.figure(figsize=(10, 5))
-for i in range(10):  # 10 farklı sınıf için örnekler
+for i in range(10):
     plt.subplot(2, 5, i + 1)
     plt.imshow(X_train[label_train == i][0], cmap='gray')  # İlk örneği göster
     plt.title(f'Class {i}')
     plt.axis('off')
 plt.show()
 
+
 _, img_height, img_width, channel = X_train.shape
 batch_size = 32
+
 
 train_datagen = ImageDataGenerator(rotation_range=20, zoom_range=0.1, horizontal_flip=True, rescale=1./255)
 test_datagen = ImageDataGenerator(rescale=1./255)
 
+
 train_generator = train_datagen.flow(X_train, Y_train, batch_size=batch_size)
 test_generator = test_datagen.flow(X_test, Y_test, batch_size=batch_size)
+
 
 model = models.Sequential([
     layers.Conv2D(16, (2, 2), activation="relu", padding="same", input_shape=(img_height, img_width, channel)),
@@ -81,7 +86,8 @@ model.summary()
 
 steps_per_epoch = train_generator.n // batch_size
 validation_steps = test_generator.n // batch_size
-# Modeli eğitme
+
+
 history = model.fit(
     train_generator,
     steps_per_epoch=steps_per_epoch,
@@ -90,7 +96,7 @@ history = model.fit(
     validation_steps=validation_steps
 )
 
-# Modeli test etme
+
 test_loss, test_acc = model.evaluate(test_generator, steps=len(test_generator))
 print(f"Test doğruluğu: {test_acc}")
 
@@ -120,7 +126,7 @@ plt.ylabel("Loss")
 plt.legend()
 
 plt.subplot(2, 2, 4)  # 4. grafik
-plt.plot(history.history["val_accuracy"], label="Doğrulama Doğruluğu")
+plt.plot(history.history["val_accuracy"], label="Validation")
 plt.title("Val Accuracy Of Epoch")
 plt.xlabel("Epoch")
 plt.ylabel("Validation")
